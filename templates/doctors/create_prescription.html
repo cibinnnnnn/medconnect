@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Prescription - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="dashboard-card">
+                <h2 class="mb-4"><i class="fas fa-prescription"></i> Create Prescription</h2>
+                
+                <div class="alert alert-info mb-4">
+                    <strong>Patient:</strong> {{ appointment.patient.user.get_full_name }} ({{ appointment.patient.patient_id }})<br>
+                    <strong>Appointment:</strong> {{ appointment.appointment_date }} at {{ appointment.appointment_time }}<br>
+                    <strong>Symptoms:</strong> {{ appointment.symptoms }}
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Diagnosis</label>
+                        <textarea name="diagnosis" class="form-control" rows="4" 
+                                  placeholder="Enter diagnosis details..." required></textarea>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Medications</label>
+                        <textarea name="medications" class="form-control" rows="6" 
+                                  placeholder="Medicine Name - Dosage - Frequency - Duration&#10;Example:&#10;Paracetamol 500mg - 1 tablet - Three times daily - 5 days&#10;Amoxicillin 250mg - 1 capsule - Twice daily - 7 days" 
+                                  required></textarea>
+                        <small class="text-muted">Enter each medication on a new line</small>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Tests Recommended (Optional)</label>
+                        <textarea name="tests_recommended" class="form-control" rows="3" 
+                                  placeholder="List any lab tests or imaging required..."></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold">Follow-up Date (Optional)</label>
+                            <input type="date" name="follow_up_date" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Additional Notes</label>
+                        <textarea name="notes" class="form-control" rows="3" 
+                                  placeholder="Any additional instructions or notes..."></textarea>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success btn-lg flex-grow-1">
+                            <i class="fas fa-save"></i> Save Prescription
+                        </button>
+                        <a href="{% url 'manage_appointments' %}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

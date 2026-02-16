@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Details - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="dashboard-card">
+                <h4 class="mb-4"><i class="fas fa-user"></i> Patient Information</h4>
+                <p><strong>Name:</strong> {{ patient.user.get_full_name }}</p>
+                <p><strong>Patient ID:</strong> {{ patient.patient_id }}</p>
+                <p><strong>Email:</strong> {{ patient.user.email }}</p>
+                <p><strong>Phone:</strong> {{ patient.user.phone }}</p>
+                <p><strong>Date of Birth:</strong> {{ patient.user.date_of_birth|default:"Not provided" }}</p>
+                <p><strong>Blood Group:</strong> {{ patient.blood_group|default:"Not specified" }}</p>
+                <p><strong>Address:</strong> {{ patient.user.address|default:"Not provided" }}</p>
+                
+                {% if patient.medical_conditions %}
+                <hr>
+                <h5>Medical Conditions</h5>
+                <p>{{ patient.medical_conditions }}</p>
+                {% endif %}
+                
+                {% if patient.emergency_contact %}
+                <hr>
+                <h5>Emergency Contact</h5>
+                <p>{{ patient.emergency_contact }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="dashboard-card mb-4">
+                <h4 class="mb-4"><i class="fas fa-calendar-alt"></i> Appointment History</h4>
+                {% if appointments %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Doctor</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in appointments %}
+                            <tr>
+                                <td>{{ appointment.appointment_date }}</td>
+                                <td>Dr. {{ appointment.doctor.user.get_full_name }}</td>
+                                <td>
+                                    <span class="badge bg-{% if appointment.status == 'completed' %}success{% elif appointment.status == 'confirmed' %}info{% else %}warning{% endif %}">
+                                        {{ appointment.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if appointment.status == 'confirmed' %}
+                                    <a href="{% url 'create_prescription' appointment.id %}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-prescription"></i> Create Prescription
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No appointment history</p>
+                {% endif %}
+            </div>
+            
+            <div class="dashboard-card mb-4">
+                <h4 class="mb-4"><i class="fas fa-prescription"></i> Prescriptions</h4>
+                {% if prescriptions %}
+                <div class="accordion" id="prescriptionsAccordion">
+                    {% for prescription in prescriptions %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#prescription{{ prescription.id }}">
+                                {{ prescription.created_at|date:"M d, Y" }} - {{ prescription.diagnosis|truncatewords:8 }}
+                            </button>
+                        </h2>
+                        <div id="prescription{{ prescription.id }}" class="accordion-collapse collapse" data-bs-parent="#prescriptionsAccordion">
+                            <div class="accordion-body">
+                                <p><strong>Prescription ID:</strong> {{ prescription.prescription_id }}</p>
+                                <p><strong>Diagnosis:</strong> {{ prescription.diagnosis }}</p>
+                                <p><strong>Medications:</strong></p>
+                                <pre>{{ prescription.medications }}</pre>
+                                {% if prescription.tests_recommended %}
+                                <p><strong>Tests Recommended:</strong> {{ prescription.tests_recommended }}</p>
+                                {% endif %}
+                                {% if prescription.notes %}
+                                <p><strong>Notes:</strong> {{ prescription.notes }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No prescriptions available</p>
+                {% endif %}
+            </div>
+            
+            <div class="dashboard-card">
+                <h4 class="mb-4"><i class="fas fa-file-medical"></i> Medical Records</h4>
+                {% if medical_records %}
+                <div class="list-group">
+                    {% for record in medical_records %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <h6>{{ record.title }}</h6>
+                            <small class="text-muted">{{ record.created_at|date:"M d, Y" }}</small>
+                        </div>
+                        <p class="mb-1"><span class="badge bg-info">{{ record.get_record_type_display }}</span></p>
+                        <p class="mb-0">{{ record.description }}</p>
+                        {% if record.file %}
+                        <a href="{{ record.file.url }}" class="btn btn-sm btn-primary mt-2" target="_blank">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No medical records available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{% url 'patient_records' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Patient Records
+        </a>
+    </div>
+</div>
+{% endblock %}

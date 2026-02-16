@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Diagnostic Reports - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4"><i class="fas fa-file-medical"></i> Diagnostic Reports & Medical Records</h2>
+    
+    {% if records %}
+    <div class="row">
+        {% for record in records %}
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5>{{ record.title }}</h5>
+                        <span class="badge bg-info">{{ record.get_record_type_display }}</span>
+                    </div>
+                    <small class="text-muted">{{ record.created_at|date:"M d, Y" }}</small>
+                </div>
+                <p>{{ record.description }}</p>
+                {% if record.file %}
+                <a href="{{ record.file.url }}" class="btn btn-sm btn-primary" target="_blank">
+                    <i class="fas fa-download"></i> Download
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <h4><i class="fas fa-info-circle"></i> No Records Found</h4>
+        <p>You don't have any diagnostic reports or medical records yet.</p>
+        <p>Reports from your consultations will appear here.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

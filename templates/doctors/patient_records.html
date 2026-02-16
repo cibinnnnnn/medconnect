@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Records - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4"><i class="fas fa-folder-open"></i> Patient Records</h2>
+    
+    {% if patients %}
+    <div class="dashboard-card">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Blood Group</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                    <tr>
+                        <td>{{ patient.patient_id }}</td>
+                        <td>{{ patient.user.get_full_name }}</td>
+                        <td>{{ patient.user.email }}</td>
+                        <td>{{ patient.user.phone }}</td>
+                        <td>{{ patient.blood_group|default:"N/A" }}</td>
+                        <td>
+                            <a href="{% url 'patient_detail' patient.id %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p>No patient records available.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

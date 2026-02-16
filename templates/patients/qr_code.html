@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Your QR Code - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="dashboard-card text-center">
+                <h2 class="mb-4"><i class="fas fa-qrcode"></i> Your Patient QR Code</h2>
+                <p class="text-muted mb-4">Use this QR code for quick check-in at the hospital</p>
+                
+                {% if patient.qr_code %}
+                <div class="mb-4">
+                    <img src="{{ patient.qr_code.url }}" alt="Patient QR Code" class="img-fluid" style="max-width: 400px; border: 5px solid #4A90E2; border-radius: 15px; padding: 20px; background: white;">
+                </div>
+                
+                <div class="alert alert-info text-start">
+                    <h5><i class="fas fa-info-circle"></i> How to Use:</h5>
+                    <ol>
+                        <li>Show this QR code at the hospital reception</li>
+                        <li>Staff will scan it for instant check-in</li>
+                        <li>Your appointment will be automatically registered</li>
+                        <li>Receive your token number instantly</li>
+                    </ol>
+                </div>
+                
+                <div class="mt-4">
+                    <strong>Patient ID:</strong> {{ patient.patient_id }}<br>
+                    <strong>Name:</strong> {{ patient.user.get_full_name }}<br>
+                    <strong>Blood Group:</strong> {{ patient.blood_group|default:"Not specified" }}
+                </div>
+                
+                <div class="mt-4">
+                    <button class="btn btn-primary" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print QR Code
+                    </button>
+                    <a href="{{ patient.qr_code.url }}" download class="btn btn-success">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                </div>
+                {% else %}
+                <p class="text-danger">QR Code not available. Please contact support.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    nav, footer, .btn { display: none !important; }
+    .dashboard-card { border: none !important; box-shadow: none !important; }
+}
+</style>
+{% endblock %}

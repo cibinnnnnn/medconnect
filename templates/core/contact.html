@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Contact Us</h1>
+        <p class="lead">Get in touch with our team</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card">
+                <h3 class="mb-4">Send Us a Message</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea name="message" class="form-control" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-custom-primary w-100">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="dashboard-card mb-4">
+                <h3 class="mb-4">Contact Information</h3>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="fas fa-map-marker-alt fa-2x text-primary" style="width: 40px;"></i>
+                        <strong>Address:</strong><br>
+                        123 Healthcare Street, Medical City, MC 12345
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-phone fa-2x text-primary" style="width: 40px;"></i>
+                        <strong>Phone:</strong><br>
+                        +1 (555) 123-4567
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-envelope fa-2x text-primary" style="width: 40px;"></i>
+                        <strong>Email:</strong><br>
+                        info@medconnect.com
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-clock fa-2x text-primary" style="width: 40px;"></i>
+                        <strong>Hours:</strong><br>
+                        Monday - Friday: 8:00 AM - 8:00 PM<br>
+                        Saturday: 9:00 AM - 5:00 PM<br>
+                        Sunday: Closed
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="dashboard-card">
+                <h4>Emergency Contact</h4>
+                <p class="lead text-danger mb-0">
+                    <i class="fas fa-ambulance"></i> 911 or +1 (555) 999-9999
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

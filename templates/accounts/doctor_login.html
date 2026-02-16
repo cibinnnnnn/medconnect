@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Doctor Login - MedConnect{% endblock %}
+
+{% block content %}
+<div style="background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 50%, #FAF5FF 100%); min-height: 100vh; padding: 60px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div style="background: white; border-radius: 20px; padding: 50px; box-shadow: 0 10px 40px rgba(0, 102, 204, 0.15); border: 2px solid #E2E8F0;">
+                    <div class="text-center mb-5">
+                        <div style="display: inline-block; padding: 15px 25px; background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%); border-radius: 15px; margin-bottom: 20px;">
+                            <i class="fas fa-user-md" style="font-size: 2rem; color: white;"></i>
+                        </div>
+                        <h2 style="background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 2rem;">Doctor Login</h2>
+                        <p class="text-muted" style="font-size: 1.05rem;">Access your healthcare dashboard</p>
+                    </div>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="border-radius: 10px; border-left: 4px solid #0066cc;">
+                                <i class="fas fa-info-circle me-2"></i>{{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label" style="font-weight: 600; color: #475569; margin-bottom: 10px;">Username</label>
+                            <input type="text" name="username" class="form-control" style="border: 2px solid #E2E8F0; border-radius: 10px; padding: 12px 15px; transition: all 0.3s;" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label" style="font-weight: 600; color: #475569; margin-bottom: 10px;">Password</label>
+                            <input type="password" name="password" class="form-control" style="border: 2px solid #E2E8F0; border-radius: 10px; padding: 12px 15px; transition: all 0.3s;" required>
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" style="cursor: pointer;">
+                            <label class="form-check-label" for="rememberMe" style="cursor: pointer; color: #64748B;">Remember me for 30 days</label>
+                        </div>
+                        
+                        <button type="submit" class="btn w-100 py-3" style="background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 1.05rem; transition: all 0.3s;">
+                            <i class="fas fa-sign-in-alt me-2"></i> Doctor Login
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-5">
+                        <p style="color: #64748B;">Not a doctor? <a href="{% url 'register' %}" style="color: #0066cc; text-decoration: none; font-weight: 600;">Patient Registration</a></p>
+                        <p><a href="{% url 'index' %}" style="color: #0066cc; text-decoration: none; font-weight: 600;">Back to Home</a></p>
+                    </div>
+                    
+                    <div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid #E2E8F0; text-align: center;">
+                        <p style="color: #94A3B8; font-size: 0.9rem;">For account access, contact your administrator</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        border-color: #0066cc !important;
+        box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1) !important;
+        outline: none !important;
+    }
+</style>
+{% endblock %}

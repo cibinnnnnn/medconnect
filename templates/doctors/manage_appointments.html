@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Appointments - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4"><i class="fas fa-calendar-check"></i> Manage Appointments</h2>
+    
+    {% if appointments %}
+    <div class="dashboard-card">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>Symptoms</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.appointment_date }}</td>
+                        <td>{{ appointment.appointment_time }}</td>
+                        <td>
+                            {{ appointment.patient.user.get_full_name }}<br>
+                            <small class="text-muted">{{ appointment.patient.patient_id }}</small>
+                        </td>
+                        <td>{{ appointment.symptoms|truncatewords:8 }}</td>
+                        <td>
+                            <span class="badge bg-{% if appointment.status == 'confirmed' %}success{% elif appointment.status == 'pending' %}warning{% elif appointment.status == 'completed' %}info{% else %}danger{% endif %}">
+                                {{ appointment.status|upper }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if appointment.status == 'pending' %}
+                            <form method="post" action="{% url 'update_appointment_status' appointment.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="confirmed">
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="fas fa-check"></i> Confirm
+                                </button>
+                            </form>
+                            {% endif %}
+                            
+                            <a href="{% url 'patient_detail' appointment.patient.id %}" class="btn btn-sm btn-info">
+                                <i class="fas fa-user"></i> View Patient
+                            </a>
+                            
+                            {% if appointment.status == 'confirmed' %}
+                            <a href="{% url 'create_prescription' appointment.id %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-prescription"></i> Prescribe
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p>No appointments to manage.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

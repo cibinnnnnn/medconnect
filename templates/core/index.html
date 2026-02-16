@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MedConnect - Making Health Care Better Together{% endblock %}
+
+{% block content %}
+<style>
+    .hero-section-new {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(245,249,252,0.98) 100%);
+        padding: 60px 0;
+        min-height: 600px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 60px;
+    }
+
+    .hero-text h1 {
+        font-size: 3.8rem;
+        font-weight: 800;
+        color: #1a2b3d;
+        line-height: 1.2;
+        margin-bottom: 25px;
+        letter-spacing: -1px;
+    }
+
+    .hero-text p {
+        font-size: 1.1rem;
+        color: #64748b;
+        line-height: 1.8;
+        margin-bottom: 35px;
+        font-weight: 400;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .btn-make-appointment {
+        background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+    }
+
+    .btn-make-appointment:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-view-department {
+        background: white;
+        color: #0066cc;
+        border: 2px solid #0066cc;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-view-department:hover {
+        background: #f0f7ff;
+        color: #0066cc;
+        text-decoration: none;
+    }
+
+    .hero-image-container {
+        text-align: center;
+        position: relative;
+    }
+
+    .hero-image-container img {
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .features-grid-hero {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 50px;
+        padding: 0;
+    }
+
+    .feature-box-hero {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+    .feature-box-hero:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,102,204,0.15);
+    }
+
+    .feature-box-hero i {
+        font-size: 2.5rem;
+        color: #0066cc;
+        margin-bottom: 15px;
+    }
+
+    .feature-box-hero h4 {
+        color: #1a2b3d;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .feature-box-hero p {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .hero-content {
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .hero-text h1 {
+            font-size: 2.5rem;
+        }
+
+        .features-grid-hero {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-section-new">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text col-lg-6">
+                <h1>Making Health Care Better Together</h1>
+                <p>Experience seamless healthcare management with our innovative platform. Connect with expert doctors, manage your appointments, and access your medical records all in one place.</p>
+                <div class="hero-buttons">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'appointments:book_appointment' %}" class="btn-make-appointment">Make An Appointment</a>
+                        <a href="{% url 'appointments:my_appointments' %}" class="btn-view-department">My Appointments</a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn-make-appointment">Make An Appointment</a>
+                        <a href="{% url 'appointments:book_appointment' %}" class="btn-view-department">View Department</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="hero-image-container col-lg-6">
+                <img src="{% static 'image/doctor-hero.png' %}" alt="Healthcare Professional" style="max-height: 450px;">
+            </div>
+        </div>
+
+        <!-- Feature Boxes Below Hero -->
+        <div class="features-grid-hero">
+            <div class="feature-box-hero">
+                <i class="fas fa-stethoscope"></i>
+                <h4>Primary Care</h4>
+                <p>Access general healthcare services from qualified professionals</p>
+            </div>
+            <div class="feature-box-hero">
+                <i class="fas fa-heart-pulse"></i>
+                <h4>Emergency Cases</h4>
+                <p>Quick response team for urgent medical situations</p>
+            </div>
+           <div class="feature-box-hero">
+                <i class="fas fa-x-ray"></i>
+                <h4>Radiology</h4>
+                <p>State-of-the-art imaging services for accurate diagnosis</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Section -->
+<section class="py-5" style="background: #f8fafc; padding: 80px 0;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 style="font-size: 2.8rem; color: #1a2b3d; font-weight: 800; margin-bottom: 20px;">Why Choose MedConnect?</h2>
+            <p style="font-size: 1.1rem; color: #64748b;">Experience the best healthcare services with modern technology</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div style="text-align: center; padding: 30px;">
+                    <div style="font-size: 3rem; color: #0066cc; margin-bottom: 15px;"><i class="fas fa-user-md"></i></div>
+                    <h4 style="color: #1a2b3d; font-weight: 700; margin-bottom: 10px;">Expert Doctors</h4>
+                    <p style="color: #64748b;">Connect with certified specialists across all medical fields</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div style="text-align: center; padding: 30px;">
+                    <div style="font-size: 3rem; color: #0066cc; margin-bottom: 15px;"><i class="fas fa-file-medical"></i></div>
+                    <h4 style="color: #1a2b3d; font-weight: 700; margin-bottom: 10px;">Digital Records</h4>
+                    <p style="color: #64748b;">Access your complete medical history anytime, anywhere</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div style="text-align: center; padding: 30px;">
+                    <div style="font-size: 3rem; color: #0066cc; margin-bottom: 15px;"><i class="fas fa-clock"></i></div>
+                    <h4 style="color: #1a2b3d; font-weight: 700; margin-bottom: 10px;">24/7 Support</h4>
+                    <p style="color: #64748b;">Round-the-clock assistance for all your healthcare needs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Departments Section -->
+<section id="departments" style="padding: 80px 0;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 style="font-size: 2.8rem; color: #1a2b3d; font-weight: 800; margin-bottom: 20px;">Our Specializations</h2>
+            <p style="font-size: 1.1rem; color: #64748b;">Comprehensive healthcare across all major departments</p>
+        </div>
+        <div class="row">
+            {% for department in departments %}
+            <div class="col-md-4 mb-4">
+                <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: all 0.3s ease; text-align: center;">
+                    <div style="font-size: 2.5rem; color: #0066cc; margin-bottom: 15px;">{{ department.icon }}</div>
+                    <h4 style="color: #1a2b3d; font-weight: 700; margin-bottom: 10px;">{{ department.name }}</h4>
+                    <p style="color: #64748b; margin-bottom: 20px;">{{ department.description }}</p>
+                    <a href="{% url 'appointments:book_appointment' %}" style="background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%); color: white; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; transition: all 0.3s ease;">Book Now</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section style="background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%); padding: 80px 0; color: white;">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <h2 style="font-size: 3rem; font-weight: 800; margin-bottom: 10px;">{{ total_patients|default:0 }}+</h2>
+                <p style="font-size: 1.1rem; opacity: 0.95;">Happy Patients</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h2 style="font-size: 3rem; font-weight: 800; margin-bottom: 10px;">{{ total_doctors|default:0 }}+</h2>
+                <p style="font-size: 1.1rem; opacity: 0.95;">Expert Doctors</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h2 style="font-size: 3rem; font-weight: 800; margin-bottom: 10px;">15+</h2>
+                <p style="font-size: 1.1rem; opacity: 0.95;">Departments</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h2 style="font-size: 3rem; font-weight: 800; margin-bottom: 10px;">10K+</h2>
+                <p style="font-size: 1.1rem; opacity: 0.95;">Consultations</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section style="padding: 80px 0; background: #f8fafc;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 style="font-size: 2.8rem; color: #1a2b3d; font-weight: 800; margin-bottom: 20px;">What Our Patients Say</h2>
+            <p style="font-size: 1.1rem; color: #64748b;">Real experiences from real people</p>
+        </div>
+        <div class="row">
+            {% for testimonial in testimonials %}
+            <div class="col-md-4 mb-4">
+                <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <div style="color: #0066cc; margin-bottom: 15px;">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= testimonial.rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p style="color: #64748b; font-style: italic; margin-bottom: 15px; line-height: 1.6;">"{{ testimonial.text }}"</p>
+                    <p style="color: #1a2b3d; font-weight: 600; margin: 0;">{{ testimonial.name }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+               
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section style="background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%); color: white; padding: 80px 0; text-align: center;">
+    <div class="container">
+        <h2 style="font-size: 2.8rem; font-weight: 800; margin-bottom: 20px;">Ready to Get Started?</h2>
+        <p style="font-size: 1.1rem; margin-bottom: 30px; opacity: 0.95;">Join thousands of patients experiencing better healthcare</p>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'register' %}" style="background: white; color: #0066cc; padding: 14px 40px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 1.05rem; display: inline-block; transition: all 0.3s ease;">Sign Up Now</a>
+        {% else %}
+        <a href="{% url 'appointments:book_appointment' %}" style="background: white; color: #0066cc; padding: 14px 40px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 1.05rem; display: inline-block; transition: all 0.3s ease;">Book Appointment</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Appointment Details - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="dashboard-card">
+                <h2 class="mb-4"><i class="fas fa-file-medical-alt"></i> Appointment Details</h2>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Appointment ID:</strong>
+                        <p>{{ appointment.appointment_id }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Status:</strong>
+                        <p>
+                            <span class="badge bg-{% if appointment.status == 'confirmed' %}success{% elif appointment.status == 'pending' %}warning{% elif appointment.status == 'completed' %}info{% else %}danger{% endif %}">
+                                {{ appointment.status|upper }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Patient:</strong>
+                        <p>{{ appointment.patient.user.get_full_name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Doctor:</strong>
+                        <p>Dr. {{ appointment.doctor.user.get_full_name }}<br>
+                        <small class="text-muted">{{ appointment.doctor.get_specialization_display }}</small></p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Date:</strong>
+                        <p>{{ appointment.appointment_date }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Time:</strong>
+                        <p>{{ appointment.appointment_time }}</p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-3">
+                    <strong>Symptoms / Reason:</strong>
+                    <p>{{ appointment.symptoms|default:"Not specified" }}</p>
+                </div>
+                
+                {% if appointment.notes %}
+                <div class="mb-3">
+                    <strong>Doctor's Notes:</strong>
+                    <p>{{ appointment.notes }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <a href="{% url 'appointments:my_appointments' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Appointments
+                    </a>
+                    {% if appointment.status == 'pending' or appointment.status == 'confirmed' %}
+                    <a href="{% url 'appointments:cancel_appointment' appointment.id %}" class="btn btn-danger"
+                       onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                        <i class="fas fa-times"></i> Cancel Appointment
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

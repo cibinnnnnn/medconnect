@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h2><i class="fas fa-user-shield"></i> Admin Dashboard</h2>
+            <p class="text-muted">Hospital Management Overview</p>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h3>{{ total_patients }}</h3>
+                <p><i class="fas fa-users"></i> Total Patients</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #50C878, #27AE60);">
+                <h3>{{ total_doctors }}</h3>
+                <p><i class="fas fa-user-md"></i> Total Doctors</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #F39C12, #E67E22);">
+                <h3>{{ total_appointments }}</h3>
+                <p><i class="fas fa-calendar-check"></i> Total Appointments</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #E74C3C, #C0392B);">
+                <h3>{{ pending_appointments }}</h3>
+                <p><i class="fas fa-clock"></i> Pending</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Management Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <h4 class="mb-4"><i class="fas fa-cogs"></i> Management Actions</h4>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'manage_doctors' %}" class="btn btn-primary w-100 py-3">
+                            <i class="fas fa-user-md"></i><br>Manage Doctors
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'manage_patients' %}" class="btn btn-info w-100 py-3">
+                            <i class="fas fa-users"></i><br>Manage Patients
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'analytics' %}" class="btn btn-success w-100 py-3">
+                            <i class="fas fa-chart-bar"></i><br>Analytics & Reports
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/admin/" class="btn btn-warning w-100 py-3">
+                            <i class="fas fa-tools"></i><br>Django Admin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Recent Appointments -->
+        <div class="col-md-8">
+            <div class="dashboard-card">
+                <h4 class="mb-4"><i class="fas fa-calendar-alt"></i> Recent Appointments</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in recent_appointments %}
+                            <tr>
+                                <td>{{ appointment.appointment_id }}</td>
+                                <td>{{ appointment.patient.user.get_full_name }}</td>
+                                <td>Dr. {{ appointment.doctor.user.get_full_name }}</td>
+                                <td>{{ appointment.appointment_date }}</td>
+                                <td>
+                                    <span class="badge bg-{% if appointment.status == 'confirmed' %}success{% elif appointment.status == 'pending' %}warning{% elif appointment.status == 'completed' %}info{% else %}danger{% endif %}">
+                                        {{ appointment.status|upper }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Department Statistics -->
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h4 class="mb-4"><i class="fas fa-hospital"></i> Department Stats</h4>
+                {% if department_stats %}
+                <ul class="list-group">
+                    {% for dept in department_stats %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ dept.specialization|title }}
+                        <span class="badge bg-primary rounded-pill">{{ dept.count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">No department data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

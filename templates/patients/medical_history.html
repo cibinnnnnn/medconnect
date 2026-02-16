@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Medical History - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4"><i class="fas fa-history"></i> Medical History</h2>
+    
+    <div class="dashboard-card mb-4">
+        <h4 class="mb-3">Completed Consultations</h4>
+        {% if appointments %}
+        <div class="accordion" id="appointmentsAccordion">
+            {% for appointment in appointments %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#appointment{{ appointment.id }}">
+                        {{ appointment.appointment_date }} - Dr. {{ appointment.doctor.user.get_full_name }} ({{ appointment.doctor.get_specialization_display }})
+                    </button>
+                </h2>
+                <div id="appointment{{ appointment.id }}" class="accordion-collapse collapse" data-bs-parent="#appointmentsAccordion">
+                    <div class="accordion-body">
+                        <p><strong>Symptoms:</strong> {{ appointment.symptoms }}</p>
+                        {% if appointment.notes %}
+                        <p><strong>Doctor's Notes:</strong> {{ appointment.notes }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">No completed consultations yet.</p>
+        {% endif %}
+    </div>
+    
+    <div class="dashboard-card">
+        <h4 class="mb-3">Prescriptions</h4>
+        {% if prescriptions %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Doctor</th>
+                        <th>Diagnosis</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prescription in prescriptions %}
+                    <tr>
+                        <td>{{ prescription.created_at|date:"Y-m-d" }}</td>
+                        <td>Dr. {{ prescription.doctor.user.get_full_name }}</td>
+                        <td>{{ prescription.diagnosis|truncatewords:10 }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#prescriptionModal{{ prescription.id }}">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Prescription Modal -->
+                    <div class="modal fade" id="prescriptionModal{{ prescription.id }}" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Prescription - {{ prescription.prescription_id }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Date:</strong> {{ prescription.created_at }}</p>
+                                    <p><strong>Doctor:</strong> Dr. {{ prescription.doctor.user.get_full_name }}</p>
+                                    <hr>
+                                    <p><strong>Diagnosis:</strong></p>
+                                    <p>{{ prescription.diagnosis }}</p>
+                                    <p><strong>Medications:</strong></p>
+                                    <pre>{{ prescription.medications }}</pre>
+                                    {% if prescription.tests_recommended %}
+                                    <p><strong>Tests Recommended:</strong></p>
+                                    <p>{{ prescription.tests_recommended }}</p>
+                                    {% endif %}
+                                    {% if prescription.follow_up_date %}
+                                    <p><strong>Follow-up Date:</strong> {{ prescription.follow_up_date }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No prescriptions available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

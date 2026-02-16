@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}About - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-3 fw-bold">About MedConnect</h1>
+        <p class="lead">Your Health, Connected - Revolutionizing Healthcare Management</p>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h2>Our Mission</h2>
+            <p class="lead">
+                To provide accessible, efficient, and patient-centered healthcare through innovative AI-driven technology.
+            </p>
+            <p>
+                MedConnect bridges the gap between patients, doctors, and hospital administration, creating a seamless 
+                healthcare ecosystem that puts patient care first. We leverage cutting-edge artificial intelligence 
+                and modern web technologies to deliver healthcare services that are both advanced and easy to use.
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h2>Our Vision</h2>
+            <p class="lead">
+                To become the leading healthcare management platform trusted by millions worldwide.
+            </p>
+            <p>
+                We envision a future where healthcare is accessible to everyone, where managing health records is 
+                effortless, and where AI assists both patients and doctors in making informed decisions. MedConnect 
+                is committed to continuous innovation and improvement in healthcare delivery.
+            </p>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">What We Offer</h2>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="text-center p-4">
+                <i class="fas fa-robot fa-4x text-primary mb-3"></i>
+                <h4>AI-Powered Insights</h4>
+                <p>Get instant symptom analysis and health recommendations powered by advanced AI technology.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="text-center p-4">
+                <i class="fas fa-shield-alt fa-4x text-success mb-3"></i>
+                <h4>Secure & Private</h4>
+                <p>Your medical data is protected with enterprise-grade security and encryption.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="text-center p-4">
+                <i class="fas fa-clock fa-4x text-info mb-3"></i>
+                <h4>24/7 Access</h4>
+                <p>Access your health records and book appointments anytime, anywhere.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center py-5" style="background: linear-gradient(135deg, #4A90E2, #50C878); border-radius: 15px;">
+        <div class="text-white">
+            <h2 class="mb-4">Join MedConnect Today</h2>
+            <p class="lead mb-4">Experience the future of healthcare management</p>
+            <a href="{% url 'register' %}" class="btn btn-light btn-lg">Get Started</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

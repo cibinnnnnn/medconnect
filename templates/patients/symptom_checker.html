@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Symptom Checker - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="dashboard-card">
+                <h2 class="mb-4 text-center">
+                    <i class="fas fa-robot"></i> AI Symptom Checker
+                </h2>
+                <p class="text-center text-muted mb-4">
+                    Describe your symptoms and get AI-powered preliminary health insights
+                </p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">What symptoms are you experiencing?</label>
+                        <textarea name="symptoms" class="form-control" rows="6" 
+                                  placeholder="Example: I have a headache, fever, and body aches for 2 days..." 
+                                  required></textarea>
+                        <small class="text-muted">Be as detailed as possible for better analysis</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-custom-primary btn-lg w-100">
+                        <i class="fas fa-search"></i> Analyze Symptoms
+                    </button>
+                </form>
+                
+                {% if ai_response %}
+                <div class="mt-5">
+                    <div class="alert alert-info">
+                        <h4><i class="fas fa-info-circle"></i> AI Analysis Results</h4>
+                        <hr>
+                        <p class="lead">{{ ai_response.message }}</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <strong>Recommended Specialization:</strong><br>
+                                <span class="badge bg-primary fs-6 mt-1">{{ ai_response.specialization }}</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Severity Level:</strong><br>
+                                {% if ai_response.severity == 'high' %}
+                                <span class="badge bg-danger fs-6 mt-1">High</span>
+                                {% elif ai_response.severity == 'moderate' %}
+                                <span class="badge bg-warning fs-6 mt-1">Moderate</span>
+                                {% else %}
+                                <span class="badge bg-success fs-6 mt-1">Low</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3">
+                                <strong>AI Confidence:</strong><br>
+                                <span class="badge bg-info fs-6 mt-1">{{ ai_response.confidence|floatformat:0 }}%</span>
+                            </div>
+                        </div>
+                        
+                        {% if ai_response.matched_symptoms %}
+                        <div class="mt-4">
+                            <h5>Matched Symptoms:</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for symptom in ai_response.matched_symptoms %}
+                                <span class="badge bg-secondary">{{ symptom }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if ai_response.alternative_specializations %}
+                        <div class="mt-4">
+                            <strong>Alternative Specializations:</strong><br>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                {% for spec in ai_response.alternative_specializations %}
+                                <span class="badge bg-outline-primary">{{ spec }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mt-4">
+                            <h5>Recommendations:</h5>
+                            <ul>
+                                {% for recommendation in ai_response.recommendations %}
+                                <li>{{ recommendation }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <a href="{% url 'appointments:book_appointment' %}" class="btn btn-success btn-lg">
+                                <i class="fas fa-calendar-check"></i> Book Appointment with Recommended Specialist
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <strong><i class="fas fa-exclamation-triangle"></i> Disclaimer:</strong>
+                        This is a preliminary AI analysis powered by Natural Language Processing and should not replace professional medical advice. 
+                        Please consult with a qualified healthcare professional for accurate diagnosis and treatment.
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mt-5">
+                    <h4>Common Symptoms We Can Help With:</h4>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success"></i> Fever and flu symptoms</li>
+                                <li><i class="fas fa-check text-success"></i> Headaches and migraines</li>
+                                <li><i class="fas fa-check text-success"></i> Digestive issues</li>
+                                <li><i class="fas fa-check text-success"></i> Skin conditions</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success"></i> Joint and muscle pain</li>
+                                <li><i class="fas fa-check text-success"></i> Respiratory problems</li>
+                                <li><i class="fas fa-check text-success"></i> Allergies</li>
+                                <li><i class="fas fa-check text-success"></i> And many more...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

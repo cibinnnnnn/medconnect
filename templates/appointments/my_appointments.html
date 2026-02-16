@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}My Appointments - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4"><i class="fas fa-calendar-alt"></i> My Appointments</h2>
+    
+    {% if appointments %}
+    <div class="dashboard-card">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Appointment ID</th>
+                        <th>{% if user.role == 'patient' %}Doctor{% else %}Patient{% endif %}</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.appointment_id }}</td>
+                        <td>
+                            {% if user.role == 'patient' %}
+                                Dr. {{ appointment.doctor.user.get_full_name }}<br>
+                                <small class="text-muted">{{ appointment.doctor.get_specialization_display }}</small>
+                            {% else %}
+                                {{ appointment.patient.user.get_full_name }}<br>
+                                <small class="text-muted">{{ appointment.patient.patient_id }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ appointment.appointment_date }}</td>
+                        <td>{{ appointment.appointment_time }}</td>
+                        <td>
+                            <span class="badge bg-{% if appointment.status == 'confirmed' %}success{% elif appointment.status == 'pending' %}warning{% elif appointment.status == 'completed' %}info{% else %}danger{% endif %}">
+                                {{ appointment.status|upper }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'appointments:appointment_detail' appointment.id %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            {% if appointment.status == 'pending' or appointment.status == 'confirmed' %}
+                            <a href="{% url 'appointments:cancel_appointment' appointment.id %}" class="btn btn-sm btn-danger" 
+                               onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <h4><i class="fas fa-info-circle"></i> No Appointments Found</h4>
+        <p>You don't have any appointments yet.</p>
+        {% if user.role == 'patient' %}
+        <a href="{% url 'appointments:book_appointment' %}" class="btn btn-primary">Book Your First Appointment</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

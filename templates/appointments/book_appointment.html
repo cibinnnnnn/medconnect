@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Appointment - MedConnect{% endblock %}
+
+{% block content %}
+<div style="background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 50%, #FAF5FF 100%); min-height: 100vh; padding: 60px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="dashboard-card">
+                    <div style="display: inline-block; padding: 12px 20px; background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%); border-radius: 12px; margin-bottom: 20px;">
+                        <i class="fas fa-calendar-plus" style="font-size: 1.5rem; color: white;"></i>
+                    </div>
+                    <h2 class="mb-4" style="background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900;">Book New Appointment</h2>
+                    
+                    {% if recommended_doctor and allocation_info %}
+                    <div class="alert alert-success mb-4" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%); border-left: 4px solid #10B981; border-radius: 12px;">
+                        <h5 style="color: #10B981;"><i class="fas fa-sparkles me-2"></i> AI-Recommended Doctor</h5>
+                        <hr style="border-color: #10B981; opacity: 0.2;">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p class="mb-2"><strong style="font-size: 1.1rem;">Dr. {{ recommended_doctor.user.get_full_name }}</strong></p>
+                                <p class="mb-2" style="color: #6366F1; font-weight: 600;">{{ recommended_doctor.get_specialization_display }}</p>
+                                <p class="mb-2 text-muted small">{{ allocation_info.reason }}</p>
+                                <p class="mb-0">
+                                    <span class="badge" style="background: linear-gradient(135deg, #6366F1, #A855F7); padding: 8px 12px;">Match Score: {{ allocation_info.score|floatformat:2 }}</span>
+                                    <span class="badge" style="background: linear-gradient(135deg, #F97316, #EC4899); padding: 8px 12px; color: white;">Current Load: {{ allocation_info.workload }} appointments</span>
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <p class="mb-1"><small style="color: #64748B;">Consultation Fee</small></p>
+                                <h4 style="background: linear-gradient(135deg, #10B981, #06B6D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${{ recommended_doctor.consultation_fee }}</h4>
+                            </div>
+                        </div>
+                        {% if allocation_info.alternatives %}
+                        <details class="mt-3" style="color: #475569;">
+                            <summary style="cursor: pointer; color: #6366F1; font-weight: 600;"><i class="fas fa-list me-2"></i>View Alternative Doctors</summary>
+                            <ul class="mt-3 mb-0">
+                                {% for alt in allocation_info.alternatives %}
+                                <li style="margin-bottom: 10px;">Dr. {{ alt.doctor.user.get_full_name }} - {{ alt.doctor.get_specialization_display }} 
+                                    <span class="ms-2"><small style="color: #94A3B8;">(Score: {{ alt.score }}, Load: {{ alt.workload }})</small></span></li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if symptom_analysis %}
+                    <div class="alert alert-info mb-4" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%); border-left: 4px solid #6366F1; border-radius: 12px;">
+                        <strong style="color: #6366F1;"><i class="fas fa-notes-medical me-2"></i> Your Symptoms:</strong>
+                        <p class="mb-0 mt-2" style="color: #475569;">{{ symptom_analysis.symptoms }}</p>
+                        <p class="mb-0 mt-2">
+                            <span class="badge" style="background: linear-gradient(135deg, #6366F1, #A855F7); padding: 8px 12px;">{{ symptom_analysis.specialization|title }}</span>
+                            {% if symptom_analysis.severity == 'high' %}
+                            <span class="badge" style="background: linear-gradient(135deg, #EF4444, #F97316); padding: 8px 12px; color: white;">High Severity</span>
+                            {% elif symptom_analysis.severity == 'moderate' %}
+                            <span class="badge" style="background: linear-gradient(135deg, #F97316, #FBBF24); padding: 8px 12px; color: white;">Moderate Severity</span>
+                            {% else %}
+                            <span class="badge" style="background: linear-gradient(135deg, #10B981, #06B6D4); padding: 8px 12px;">Low Severity</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Doctor</label>
+                        <select name="doctor" class="form-select" required>
+                            <option value="">Choose a doctor...</option>
+                            {% if recommended_doctor %}
+                            <option value="{{ recommended_doctor.id }}" selected>
+                                ⭐ Dr. {{ recommended_doctor.user.get_full_name }} - {{ recommended_doctor.get_specialization_display }} 
+                                (Fee: ${{ recommended_doctor.consultation_fee }}) - AI Recommended
+                            </option>
+                            {% endif %}
+                            {% for doctor in doctors %}
+                            {% if not recommended_doctor or doctor.id != recommended_doctor.id %}
+                            <option value="{{ doctor.id }}">
+                                Dr. {{ doctor.user.get_full_name }} - {{ doctor.get_specialization_display }} 
+                                (Fee: ${{ doctor.consultation_fee }})
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">AI-recommended doctors are marked with ⭐</small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Appointment Date</label>
+                            <input type="date" name="appointment_date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Preferred Time</label>
+                            <input type="time" name="appointment_time" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Symptoms / Reason for Visit</label>
+                        <textarea name="symptoms" class="form-control" rows="4" 
+                                  placeholder="Describe your symptoms or reason for consultation...">{% if symptom_analysis %}{{ symptom_analysis.symptoms }}{% endif %}</textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong><i class="fas fa-info-circle"></i> Note:</strong>
+                        Your appointment will be confirmed by the doctor. You will receive a notification once confirmed.
+                    </div>
+                    
+                    <button type="submit" class="btn btn-custom-primary btn-lg w-100 mt-3">
+                        <i class="fas fa-check"></i> Book Appointment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

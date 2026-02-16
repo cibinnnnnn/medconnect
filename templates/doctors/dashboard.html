@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctor Dashboard - MedConnect{% endblock %}
+
+{% block content %}
+<div style="background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 50%, #FAF5FF 100%); min-height: 100vh; padding: 60px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-5">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="padding: 15px 20px; background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%); border-radius: 12px;">
+                        <i class="fas fa-user-md" style="font-size: 1.8rem; color: white;"></i>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900;">Dr. {{ doctor.user.get_full_name }}</h2>
+                        <p class="text-muted" style="margin: 5px 0;">{{ doctor.get_specialization_display }} | Doctor ID: <strong>{{ doctor.doctor_id }}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row mb-5">
+            <div class="col-md-3 mb-4">
+                <div class="stat-card">
+                    <h3>{{ total_consultations }}</h3>
+                    <p><i class="fas fa-stethoscope me-2"></i> Total Consultations</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card" style="background: linear-gradient(135deg, #F97316, #0066cc);">
+                    <h3>{{ pending_appointments }}</h3>
+                    <p><i class="fas fa-clock me-2"></i> Pending</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card" style="background: linear-gradient(135deg, #0066cc, #0052a3);">
+                    <h3>{{ total_patients }}</h3>
+                    <p><i class="fas fa-users me-2"></i> Total Patients</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card" style="background: linear-gradient(135deg, #0066cc, #06B6D4);">
+                    <h3>{{ doctor.rating|default:"N/A" }}</h3>
+                    <p><i class="fas fa-star me-2"></i> Rating</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="dashboard-card">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
+                        <i class="fas fa-lightning-bolt" style="font-size: 1.3rem; background: linear-gradient(135deg, #10B981, #06B6D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                        <h4 style="margin: 0; background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">Quick Actions</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'manage_appointments' %}" class="btn btn-custom-primary w-100 py-3">
+                                <i class="fas fa-calendar-check"></i><br><small>Manage Appointments</small>
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <a href="{% url 'patient_records' %}" class="btn btn-primary w-100 py-3">
+                            <i class="fas fa-folder-open"></i><br>Patient Records
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <a href="#" class="btn btn-info w-100 py-3">
+                            <i class="fas fa-chart-line"></i><br>My Performance
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Today's Appointments -->
+    <div class="row">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <h4 class="mb-4"><i class="fas fa-calendar-day"></i> Today's Appointments</h4>
+                {% if today_appointments %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Patient</th>
+                                <th>Patient ID</th>
+                                <th>Symptoms</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in today_appointments %}
+                            <tr>
+                                <td>{{ appointment.appointment_time }}</td>
+                                <td>{{ appointment.patient.user.get_full_name }}</td>
+                                <td>{{ appointment.patient.patient_id }}</td>
+                                <td>{{ appointment.symptoms|truncatewords:10 }}</td>
+                                <td>
+                                    <span class="badge bg-{% if appointment.status == 'confirmed' %}success{% elif appointment.status == 'pending' %}warning{% else %}info{% endif %}">
+                                        {{ appointment.status|upper }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'patient_detail' appointment.patient.id %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="{% url 'create_prescription' appointment.id %}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-prescription"></i> Prescribe
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No appointments scheduled for today</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics & Reports - MedConnect{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <h2 class="mb-4"><i class="fas fa-chart-bar"></i> Analytics & Reports</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <h4 class="mb-4">Monthly Appointments</h4>
+                <canvas id="monthlyChart" height="100"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <h4 class="mb-4">Department-wise Patients</h4>
+                <canvas id="departmentChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <h4 class="mb-4"><i class="fas fa-robot"></i> AI-Powered Doctor Workload Analytics</h4>
+                <p class="text-muted mb-4">Smart load balancing system analyzing upcoming appointments for the next 7 days</p>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Specialization</th>
+                                <th>Upcoming Appointments</th>
+                                <th>Workload Status</th>
+                                <th>Utilization Rate</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in workload_analytics %}
+                            <tr>
+                                <td>
+                                    <strong>Dr. {{ item.doctor.user.get_full_name }}</strong>
+                                </td>
+                                <td>{{ item.doctor.get_specialization_display }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ item.workload }}</span>
+                                </td>
+                                <td>
+                                    {% if item.status == 'Low' %}
+                                    <span class="badge bg-success">{{ item.status }}</span>
+                                    {% elif item.status == 'Moderate' %}
+                                    <span class="badge bg-warning text-dark">{{ item.status }}</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">{{ item.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 25px;">
+                                        <div class="progress-bar {% if item.utilization_rate < 50 %}bg-success{% elif item.utilization_rate < 75 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                             role="progressbar" 
+                                             style="width: {{ item.utilization_rate }}%"
+                                             aria-valuenow="{{ item.utilization_rate }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            {{ item.utilization_rate|floatformat:0 }}%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if item.status == 'High' %}
+                                    <button class="btn btn-sm btn-warning" title="Consider redistributing appointments">
+                                        <i class="fas fa-exclamation-triangle"></i> Review
+                                    </button>
+                                    {% else %}
+                                    <button class="btn btn-sm btn-success" title="Optimal workload">
+                                        <i class="fas fa-check"></i> Good
+                                    </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No doctors available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert alert-info mt-4">
+                    <strong><i class="fas fa-lightbulb"></i> Smart Allocation Insights:</strong>
+                    The AI system automatically recommends doctors with optimal workload (Low status) to new patients, 
+                    ensuring balanced appointment distribution and better patient care quality.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <h4 class="mb-4">Export Reports</h4>
+                <div class="btn-group" role="group">
+                    <a href="{% url 'export_analytics_pdf' %}" class="btn btn-primary">
+                        <i class="fas fa-file-pdf"></i> Export to PDF
+                    </a>
+                    <a href="{% url 'export_analytics_excel' %}" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Export to Excel
+                    </a>
+                    <a href="{% url 'export_analytics_csv' %}" class="btn btn-info">
+                        <i class="fas fa-file-csv"></i> Export to CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+// Monthly Appointments Chart
+const monthlyData = {{ monthly_appointments|safe }};
+const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+new Chart(monthlyCtx, {
+    type: 'line',
+    data: {
+        labels: monthlyData.map(d => new Date(d.month).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })),
+        datasets: [{
+            label: 'Appointments',
+            data: monthlyData.map(d => d.count),
+            borderColor: '#4A90E2',
+            backgroundColor: 'rgba(74, 144, 226, 0.1)',
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true
+            }
+        }
+    }
+});
+
+// Department Chart
+const deptData = {{ department_patients|safe }};
+const deptCtx = document.getElementById('departmentChart').getContext('2d');
+new Chart(deptCtx, {
+    type: 'bar',
+    data: {
+        labels: deptData.map(d => d.doctor__specialization || 'General'),
+        datasets: [{
+            label: 'Patients',
+            data: deptData.map(d => d.count),
+            backgroundColor: [
+                '#4A90E2', '#50C878', '#F39C12', '#E74C3C', '#9B59B6', 
+                '#3498DB', '#2ECC71', '#F1C40F', '#E67E22', '#1ABC9C'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
